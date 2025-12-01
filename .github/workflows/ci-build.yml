@@ -1,0 +1,31 @@
+name: CI Build
+
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure development index.html and remove built assets
+        run: |
+          if [ -f index.src.html ]; then
+            cp index.src.html index.html
+          fi
+          rm -rf assets || true
+          rm -f vite.svg || true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
