@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: too-doo-backend
+    env: python
+    region: oregon
+    plan: free
+    repo: https://github.com/eclipse7-9/too-doo-list
+    branch: develop
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+
+jobs:
+  - type: run
+    name: init-db
+    command: python backend/init_db.py
+    env:
+      - key: DB_HOST
+      - key: DB_PORT
+      - key: DB_USER
+      - key: DB_PASSWORD
+      - key: DB_NAME
