@@ -2,7 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  base: '/too-doo-list/',
-})
+  // use '/too-doo-list/' only when building for GitHub Pages
+  base: mode === 'github' ? '/too-doo-list/' : '/',
+}))
