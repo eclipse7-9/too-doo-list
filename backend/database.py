@@ -13,6 +13,7 @@ DB_PORT = int(os.getenv('DB_PORT', '3306'))
 DB_USER = os.getenv('DB_USER', 'root')
 DB_PASSWORD = os.getenv('DB_PASSWORD', '')
 DB_NAME = os.getenv('DB_NAME', 'todo_db')
+DB_CONNECT_TIMEOUT = int(os.getenv('DB_CONNECT_TIMEOUT', '10'))
 
 def get_conn():
     return pymysql.connect(
@@ -21,6 +22,7 @@ def get_conn():
         user=DB_USER,
         password=DB_PASSWORD,
         database=DB_NAME,
+        connect_timeout=DB_CONNECT_TIMEOUT,
         cursorclass=pymysql.cursors.DictCursor,
         autocommit=False,
         charset='utf8mb4'

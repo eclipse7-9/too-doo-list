@@ -1,0 +1,82 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtualenv / env files
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+.venv/
+.env
+.env.*
+
+# Pytest
+.pytest_cache/
+.cache/
+
+# Coverage
+.coverage
+htmlcov/
+.coverage.*
+
+# MyPy
+.mypy_cache/
+
+# IDEs / editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database files (local/dev)
+*.db
+*.sqlite3
+
+# Render / deployment artifacts
+render.yaml
+*.local
+
+# Python build artifacts
+__pypackages__/
+*.egg-info/
+
+# Ignore compiled Cython files
+*.c
+*.so
+
+# Optional: ignore migrations if you don't want to commit them
+# migrations/
