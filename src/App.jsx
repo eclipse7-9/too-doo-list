@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000'
+// Use VITE_API_BASE when provided by the build; otherwise fall back to the Render URL
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://too-doo-list-5.onrender.com'
 
 function App() {
   const [tasks, setTasks] = useState([])
