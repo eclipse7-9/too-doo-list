@@ -5,7 +5,19 @@ WORKDIR /app
 
 # Copy and install dependencies
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Install system build dependencies required by some Python packages (cryptography)
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+	   build-essential \
+	   libssl-dev \
+	   libffi-dev \
+	   python3-dev \
+	   cargo \
+	&& python -m pip install --upgrade pip setuptools wheel \
+	&& pip install --no-cache-dir -r requirements.txt \
+	&& apt-get remove -y build-essential python3-dev cargo \
+	&& apt-get autoremove -y \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Copy application files
 COPY . .
