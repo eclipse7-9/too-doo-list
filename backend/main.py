@@ -14,9 +14,14 @@ except Exception:
 
 app = FastAPI()
 
+# Configure CORS origins from env var. When using credentials the
+# Access-Control-Allow-Origin header must be the exact origin (not "*").
+frontends = os.getenv("FRONTEND_ALLOWED_ORIGINS", "https://eclipse7-9.github.io")
+origins = [o.strip() for o in frontends.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,9 +38,20 @@ class PrivateNetworkMiddleware(BaseHTTPMiddleware):
         acrpn = request.headers.get("access-control-request-private-network", "").lower()
         # Handle preflight specially
         if request.method == "OPTIONS" and acrpn == "true":
-            origin = request.headers.get("origin", "*")
+            origin = request.headers.get("origin")
+            # Build allow-origin value: echo the origin when present and allowed,
+            # otherwise fall back to the first configured origin or '*'.
+            allow_origin = None
+            if origin:
+                if "*" in origins:
+                    allow_origin = origin
+                elif origin in origins:
+                    allow_origin = origin
+            if allow_origin is None:
+                allow_origin = origins[0] if origins else "*"
+
             headers = {
-                "Access-Control-Allow-Origin": origin if origin else "*",
+                "Access-Control-Allow-Origin": allow_origin,
                 "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
                 "Access-Control-Allow-Headers": request.headers.get(
                     "access-control-request-headers", "*"
@@ -45,10 +61,20 @@ class PrivateNetworkMiddleware(BaseHTTPMiddleware):
             }
             return Response(status_code=204, headers=headers)
 
-        # For non-preflight, proceed and add the header if needed
+        # For non-preflight, proceed and add headers if needed
         response = await call_next(request)
         if acrpn == "true":
             response.headers["Access-Control-Allow-Private-Network"] = "true"
+
+        # Ensure Access-Control-Allow-Origin is present for browser requests
+        origin = request.headers.get("origin")
+        if origin:
+            if "*" in origins:
+                # When credentials are allowed, echo the origin (browsers disallow '*')
+                response.headers["Access-Control-Allow-Origin"] = origin
+            elif origin in origins:
+                response.headers["Access-Control-Allow-Origin"] = origin
+
         return response
 
 
