@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import os
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
 
 # Support both running as a package (uvicorn backend.main:app) and as a module
 try:
@@ -19,6 +21,38 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Handle Private Network Access preflight requests (Chrome PNA).
+# When a secure origin (https) tries to call a local/private address,
+# the browser sends the header `Access-Control-Request-Private-Network: true`
+# on the preflight. The server must reply with
+# `Access-Control-Allow-Private-Network: true` to allow the request.
+class PrivateNetworkMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        acrpn = request.headers.get("access-control-request-private-network", "").lower()
+        # Handle preflight specially
+        if request.method == "OPTIONS" and acrpn == "true":
+            origin = request.headers.get("origin", "*")
+            headers = {
+                "Access-Control-Allow-Origin": origin if origin else "*",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+                "Access-Control-Allow-Headers": request.headers.get(
+                    "access-control-request-headers", "*"
+                ),
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Private-Network": "true",
+            }
+            return Response(status_code=204, headers=headers)
+
+        # For non-preflight, proceed and add the header if needed
+        response = await call_next(request)
+        if acrpn == "true":
+            response.headers["Access-Control-Allow-Private-Network"] = "true"
+        return response
+
+
+app.add_middleware(PrivateNetworkMiddleware)
 
 
 @app.get('/api/tasks', response_model=list[schemas.TaskOut])
