@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:github": "vite build --mode github",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build:github",
     "deploy": "gh-pages -d dist",
     "lint": "eslint .",
     "preview": "vite preview"
