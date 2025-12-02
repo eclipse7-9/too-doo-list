@@ -1,35 +1,13 @@
-name: Deploy React app to GitHub Pages
+name: Disabled deploy workflow (kept for reference)
 
+# This workflow was disabled to avoid duplicated GitHub Pages deployments.
+# It can be triggered manually if needed.
 on:
-  push:
-    branches:
-      - develop  # o 'master' si esa es tu rama principal
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  noop:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages   # 👈 crea la rama correcta para GitHub Pages
+      - name: No-op
+        run: echo "This workflow is disabled. Use deploy-gh-pages.yml instead."
