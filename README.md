@@ -16,148 +16,152 @@ Esta documentación asume que el repositorio abierto es `c:\Users\Aprendiz\Deskt
 - Herramientas: npm, pip, virtualenv, gh-pages (frontend deploy)
 
 ---
+# To‑Do List (React + FastAPI)
 
-## Arquitectura y despliegue
-- Frontend: desplegado en GitHub Pages. El frontend consume la API configurada por la variable VITE_API_BASE.
-- Backend (API): desplegado en Render. Expone endpoints REST para listar/crear/actualizar/eliminar tareas.
-- Base de datos: MySQL alojada en Railway (usada por el backend).
+Proyecto sencillo de lista de tareas con frontend en React (Vite) y backend en Python (FastAPI). Este repositorio incluye además una alternativa de backend en Node.js (`server/`).
 
-Asegúrate de que:
-- Render tenga la variable de entorno `DATABASE_URL` apuntando a la DB de Railway.
-- El backend permita CORS desde el dominio de GitHub Pages (o uso de `*` en desarrollo).
-- El frontend use `VITE_API_BASE` que apunte a la URL del backend en Render para producción.
+**Estado:** documentación centralizada y ejemplos para ejecución local y despliegue.
+
+**Contenido de esta README:** descripción, stack, requisitos, cómo ejecutar frontend/backend en local, variables de entorno, enlaces de producción y organización del repositorio.
 
 ---
 
-## Estructura relevante
-- frontend: `index.html`, `src/`, `.env` (VITE_API_BASE)
-- backend (FastAPI): `backend/main.py`, `backend/database.py`, `backend/schemas.py`, `backend/init_db.py`
-- alternativa Node: `server/index.js`, `server/db.js`, `server/schema.sql`
-- CI / deploy: `.github/workflows/`, `render.yaml`
+## Descripción
+
+Aplicación To‑Do (CRUD) para gestionar tareas. En producción típico flujo:
+
+Usuario → Frontend (Vercel / GitHub Pages) → Backend (Render) → Base de datos (Railway / MySQL)
 
 ---
 
-## Endpoints (resumen)
-Rutas principales del backend FastAPI (base: VITE_API_BASE o URL de Render):
+## Stack tecnológico
 
-- GET  /tasks          — obtener todas las tareas
-- POST /tasks          — crear una tarea (body JSON: { "title": "texto" })
-- PUT  /tasks/{id}     — actualizar (title/completed)
-- DELETE /tasks/{id}   — eliminar tarea
-
-Ejemplo curl:
-- Listar:
-  curl http://localhost:8000/tasks
-- Crear:
-  curl -X POST http://localhost:8000/tasks -H "Content-Type: application/json" -d '{"title":"Comprar"}'
+- Frontend: React + Vite (JS/JSX)
+- Backend principal: Python 3.x + FastAPI + Uvicorn
+- Alternativa backend: Node.js (Express) en `server/`
+- Base de datos: MySQL (esquema en `server/schema.sql`)
 
 ---
 
-## Variables de entorno importantes
-- Frontend:
-  - VITE_API_BASE=http://localhost:8000 (desarrollo) o https://<tu-backend-en-render>
-- Backend (FastAPI):
-  - DATABASE_URL=mysql://USER:PASSWORD@HOST:3306/DATABASE
-  - (opcional) PORT, otras variables según `backend/start.sh` o Render
-- Server (Node): revisar `server/.env.example`
+## Requisitos previos
 
-Cómo exportar en Windows (PowerShell):
-- Frontend (temporal): $env:VITE_API_BASE="http://localhost:8000"
-- Backend (temporal): $env:DATABASE_URL="mysql://user:pass@host:3306/dbname"
-
-En cmd:
-- set VITE_API_BASE=http://localhost:8000
+- Node.js (16+) y `npm` para el frontend y el `server/`
+- Python 3.8+ y `pip` para el backend FastAPI
+- MySQL si quieres correr la base de datos localmente
 
 ---
 
-## Instalación y ejecución (paso a paso)
+## Ejecutar frontend en local
 
-1) Clonar
-- git clone <repo-url>
-- cd too-doo-list-develop
+1. Instalar dependencias:
 
-2) Frontend (desarrollo)
-- npm install
-- Crear `.env` en raíz del frontend o ajustar `.env` existente:
-  # To‑Do List (React + FastAPI)
+```powershell
+cd <repo-root>
+npm install
+```
 
-  Proyecto To‑Do List sencillo con frontend en React (Vite) y backend principal en Python (FastAPI). Este repositorio incluye también una alternativa de backend en Node.js.
+2. Fijar la variable de entorno para la API (ejemplo en PowerShell):
 
-  URLs públicas del proyecto
-  - Backend (OpenAPI / Swagger): https://too-doo-list-5.onrender.com/docs
-  - Frontend (GitHub Pages): https://eclipse7-9.github.io/too-doo-list/
+```powershell
+$env:VITE_API_BASE = "http://localhost:8000"
+npm run dev
+```
 
-  Resumen
-  - Frontend: React + Vite, configuración por `VITE_API_BASE`.
-  - Backend principal: FastAPI en `backend/` que expone CRUD de tareas.
-  - Base de datos: MySQL (esquema en `server/schema.sql`).
+Nota: `npm run dev` usa Vite y por defecto abre `http://localhost:5173`.
 
-  Estructura principal
-  - `backend/` — FastAPI (app, DB, esquemas, scripts de inicialización).
-  - `server/` — alternativa Node.js (Express) con endpoints equivalentes.
-  - `src/` — frontend React + Vite.
+---
 
-  Endpoints principales
-  - GET  `/api/tasks`         — listar tareas
-  - POST `/api/tasks`         — crear tarea (JSON: `{ "title": "texto" }`)
-  - PUT  `/api/tasks/{id}`    — actualizar tarea (JSON: `{ "title": "...", "completed": true }`)
-  - DELETE `/api/tasks/{id}`  — eliminar tarea
+## Ejecutar backend (FastAPI) en local
 
-  Variables de entorno (ejemplos)
-  - Backend:
-    - `DB_HOST` (ej. `127.0.0.1`)
-    - `DB_PORT` (ej. `3306`)
-    - `DB_USER`
-    - `DB_PASSWORD`
-    - `DB_NAME`
-    - `FRONTEND_ALLOWED_ORIGINS` (ej. `http://localhost:5173,https://eclipse7-9.github.io`)
-    - `PORT` (Render provee `$PORT`)
-  - Frontend:
-    - `VITE_API_BASE` (ej. `http://localhost:8000` en dev / `https://too-doo-list-5.onrender.com` en prod)
+1. Crear y activar entorno virtual (PowerShell):
 
-  Comandos de desarrollo (PowerShell)
-  Frontend:
-  ```powershell
-  cd C:\Users\Aprendiz\Desktop\too-doo-list-develop
-  npm install
-  $env:VITE_API_BASE="http://localhost:8000"
-  npm run dev
-  ```
+```powershell
+cd backend
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
 
-  Backend (FastAPI):
-  ```powershell
-  cd C:\Users\Aprendiz\Desktop\too-doo-list-develop\backend
-  python -m venv venv
-  .\venv\Scripts\Activate.ps1
-  pip install -r requirements.txt
-  $env:DB_HOST="127.0.0.1"
-  $env:DB_PORT="3306"
-  $env:DB_USER="root"
-  $env:DB_PASSWORD=""
-  $env:DB_NAME="todo_db"
-  python init_db.py
-  uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
-  ```
+2. Variables de entorno (ejemplo):
 
-  Despliegue (resumen)
-  - Backend (Render):
-    - Build: `pip install -r backend/requirements.txt`
-    - Start: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
-    - Variables: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `FRONTEND_ALLOWED_ORIGINS`
-    - Ejecutar `python backend/init_db.py` si la DB está vacía.
-  - Frontend (GitHub Pages):
-    - Antes de build: `VITE_API_BASE` → `https://too-doo-list-5.onrender.com`
-    - `npm run build` y `npm run deploy` (usa `gh-pages`).
+```powershell
+$env:DB_HOST = "127.0.0.1"
+$env:DB_PORT = "3306"
+$env:DB_USER = "root"
+$env:DB_PASSWORD = ""
+$env:DB_NAME = "todo_db"
+```
 
-  Recomendaciones
-  - Unificar la conexión a DB: documentar `DB_*` o añadir soporte para `DATABASE_URL` en `backend`.
-  - Documentar que la API devuelve boolean en JSON para `completed` (DB guarda 0/1).
-  - Verificar que Render ejecute los comandos en el directorio `backend/` cuando se use `start.sh` o `Procfile`.
+3. Inicializar esquema y arrancar:
 
-  Archivos añadidos en el repo:
-  - `backend/.env.example`
-  - `.env.example` (root)
-  - `docs/API.md`
-  - `docs/DEPLOY.md`
+```powershell
+python init_db.py
+uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-  Si quieres, puedo commitear estos cambios y abrir un PR, o implementar soporte para `DATABASE_URL` en el backend.
+El Swagger/OpenAPI estará en `http://localhost:8000/docs`.
+
+---
+
+## Variables de entorno y `.env.example`
+
+Se incluye un ejemplo en `.env.example` en la raíz con las variables mínimas necesarias. Puntos clave:
+
+- Frontend: `VITE_API_BASE` (URL base de la API)
+- Backend (FastAPI): `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` — o alternativamente `DATABASE_URL` si se soporta.
+
+---
+
+## Enlaces de producción (ejemplos / placeholders)
+
+- Frontend (producción, Vercel/GitHub Pages): https://<tu-frontend>
+- Backend (producción, Render): https://<tu-backend>
+- Base de datos (Railway): https://railway.app/project/<tu-proyecto>
+
+Sustituye los placeholders por las URLs reales cuando estén disponibles.
+
+---
+
+## Documentación de arquitectura
+
+Ver `docs/ARQUITECTURA.md` (diagrama C4 sencillo y descripción de componentes).
+
+---
+
+## Documentación de la API
+
+Ver `docs/API.md` para endpoints, métodos HTTP, body esperado, respuestas de ejemplo y códigos de estado.
+
+---
+
+## Organización del repositorio (scaffolding)
+
+- `src/` — Frontend React + Vite
+- `public/` — Recursos estáticos del frontend
+- `backend/` — FastAPI (app, models, esquemas, scripts de inicialización)
+- `server/` — Backend alternativo en Node.js (express) y `schema.sql`
+- `docs/` — Documentación (API, ARQUITECTURA, DEPLOY)
+- `package.json` — comandos de frontend / root
+
+---
+
+## Endpoints principales (resumen)
+
+Base: `VITE_API_BASE` (dev `http://localhost:8000`)
+
+- GET  `/api/tasks`           — Listar tareas
+- POST `/api/tasks`           — Crear tarea (JSON: `{ "title": "texto" }`)
+- PUT  `/api/tasks/{id}`      — Actualizar tarea (JSON: `{ "title": "...", "completed": true }`)
+- DELETE `/api/tasks/{id}`    — Eliminar tarea
+
+Respuestas de ejemplo y detalles en `docs/API.md`.
+
+---
+
+## Próximos pasos sugeridos
+
+- Rellenar las URLs de producción en este README.
+- Añadir `DATABASE_URL` parsing en `backend` para soportar providers modernos.
+- Añadir `frontend/.env.example` si el frontend necesita variables adicionales.
+
+Si quieres, puedo commitear estos cambios y abrir un PR con los archivos añadidos.
