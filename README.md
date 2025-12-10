@@ -1,4 +1,4 @@
-# To‑Do List (React + FastAPI) — Documentación en español
+# ✅ To‑Do List (React + FastAPI) — Documentación en español
 
 Proyecto simple de lista de tareas con:
 - Frontend: React + Vite (deploy en GitHub Pages)
@@ -9,14 +9,14 @@ Esta documentación asume que el repositorio abierto es `c:\Users\Aprendiz\Deskt
 
 ---
 
-## Tecnologías clave
+## 🤖 Tecnologías clave
 - Frontend: React (Vite), JavaScript, CSS
 - Backend principal: FastAPI + uvicorn (Python 3.8+)
 - DB: MySQL (Railway)
 - Herramientas: npm, pip, virtualenv, gh-pages (frontend deploy)
 
 ---
-# To‑Do List (React + FastAPI)
+# ⚜ To‑Do List (React + FastAPI)
 
 Proyecto sencillo de lista de tareas con frontend en React (Vite) y backend en Python (FastAPI). Este repositorio incluye además una alternativa de backend en Node.js (`server/`).
 
@@ -26,7 +26,7 @@ Proyecto sencillo de lista de tareas con frontend en React (Vite) y backend en P
 
 ---
 
-## Descripción
+## 📃 Descripción
 
 Aplicación To‑Do (CRUD) para gestionar tareas. En producción típico flujo:
 
@@ -34,7 +34,7 @@ Usuario → Frontend (Vercel / GitHub Pages) → Backend (Render) → Base de da
 
 ---
 
-## Stack tecnológico
+## 🛠 Stack tecnológico
 
 - Frontend: React + Vite (JS/JSX)
 - Backend principal: Python 3.x + FastAPI + Uvicorn
@@ -43,7 +43,7 @@ Usuario → Frontend (Vercel / GitHub Pages) → Backend (Render) → Base de da
 
 ---
 
-## Requisitos previos
+## 🔰 Requisitos previos
 
 - Node.js (16+) y `npm` para el frontend y el `server/`
 - Python 3.8+ y `pip` para el backend FastAPI
@@ -51,7 +51,7 @@ Usuario → Frontend (Vercel / GitHub Pages) → Backend (Render) → Base de da
 
 ---
 
-## Ejecutar frontend en local
+## ⭕ Ejecutar frontend en local
 
 1. Instalar dependencias:
 
@@ -71,7 +71,7 @@ Nota: `npm run dev` usa Vite y por defecto abre `http://localhost:5173`.
 
 ---
 
-## Ejecutar backend (FastAPI) en local
+## ⭕ Ejecutar backend (FastAPI) en local
 
 1. Crear y activar entorno virtual (PowerShell):
 
